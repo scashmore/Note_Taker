@@ -17,9 +17,20 @@ app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, '/public/notes
 
 app.post('/api/note', (req, res) => {
     return this.util.promisify(fs.writeFile("db/db.json", JSON.stringify(note)))
+    .then()
 });
 app.get('/api/note', (req, res) => {
     return this.util.promisify(fs.readFile("db/db.json", "utf8"))
+    .then(getNote => {
+        let arr; 
+        try {
+            arr = [].concat(JSON.parse(getNote));
+        }
+        catch (error) {
+            arr = [];
+        }
+        return arr;
+    })
 });
 app.delete('/api/note', (req, res) => {
 
