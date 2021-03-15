@@ -15,7 +15,7 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, '/public/index.html
 app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, '/public/notes.html')));
 
 
-app.post('/api/note', (req, res) => {
+app.post('/api/notes', (req, res) => {
     function Note(title, text) {
         this.title = title;
         this.text = text;
@@ -36,7 +36,8 @@ app.post('/api/note', (req, res) => {
     .then(update => this.util.promisify(fs.writeFile("db/db.json", JSON.stringify(update))))
     .then (() => newNote)
 });
-app.get('/api/note', (req, res) => {
+
+app.get('/api/notes', (req, res) => {
     return this.util.promisify(fs.readFile("db/db.json", "utf8"))
     .then(getNote => {
         let arr; 
@@ -49,6 +50,7 @@ app.get('/api/note', (req, res) => {
         return arr;
     })
 });
-app.delete('/api/note', (req, res) => {
+
+app.delete('/api/notes', (req, res) => {
 
 });
