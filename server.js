@@ -16,8 +16,25 @@ app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, '/public/notes
 
 
 app.post('/api/note', (req, res) => {
-    return this.util.promisify(fs.writeFile("db/db.json", JSON.stringify(note)))
-    .then()
+    function Note(title, text) {
+        this.title = title;
+        this.text = text;
+    };
+    const newNote = new Note(title, text);
+    return this.util.promisify(fs.readFile("db/db.json", "utf8"))
+    .then(getNote => {
+        let arr; 
+        try {
+            arr = [].concat(JSON.parse(getNote));
+        }
+        catch (error) {
+            arr = [];
+        }
+        return arr;
+    })
+    .then(note => [...note, newNote])
+    .then(update => this.util.promisify(fs.writeFile("db/db.json", JSON.stringify(update))))
+    .then (() => newNote)
 });
 app.get('/api/note', (req, res) => {
     return this.util.promisify(fs.readFile("db/db.json", "utf8"))
