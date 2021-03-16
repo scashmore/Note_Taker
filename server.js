@@ -1,56 +1,51 @@
 const express = require("express");
 const path = require("path");
 const util = require("util");
-const fs = require("fs"); 
+const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.listen(PORT,()=> console.log(`Listening on PORT : ${PORT}`));
+app.listen(PORT, () => console.log(`Listening on PORT : ${PORT}`));
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '/public/index.html')));
 app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, '/public/notes.html')));
 
 
 app.post('/api/notes', (req, res) => {
-    function Note(title, text) {
-        this.title = title;
-        this.text = text;
+    const newNote = {
+        title: req.body.title,
+        text: req.body.text,
+        id: req.body.id
     };
-    const newNote = new Note(title, text);
-    return this.util.promisify(fs.readFile("db/db.json", "utf8"))
-    .then(getNote => {
-        let arr; 
-        try {
-            arr = [].concat(JSON.parse(getNote));
-        }
-        catch (error) {
-            arr = [];
-        }
-        return arr;
-    })
-    .then(note => [...note, newNote])
-    .then(update => this.util.promisify(fs.writeFile("db/db.json", JSON.stringify(update))))
-    .then (() => newNote)
+    const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
+    newNote.id = (notes.length).toString();
+    const newArray = [...notes, newNote];
+    fs.writeFileSync("./db/db.json", JSON.stringify(newArray));
+    res.sendStatus(200);
 });
 
 app.get('/api/notes', (req, res) => {
-    return this.util.promisify(fs.readFile("db/db.json", "utf8"))
-    .then(getNote => {
-        let arr; 
-        try {
-            arr = [].concat(JSON.parse(getNote));
-        }
-        catch (error) {
-            arr = [];
-        }
-        return arr;
-    })
+    const notes = fs.readFileSync("db/db.json", "utf8");
+    res.json(JSON.parse(notes));
 });
 
-app.delete('/api/notes', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
+    const notes = fs.readFileSync("db/db.json", "utf8");
+    const noteId = JSON.parse(req.params.id)
+    let newId = 0;
+    deleteNote = notes.filter(notes => {
+        return notes.id != noteId;
+    })
+    
+    for (selectedNote of deleteNote) {
+        selectedNote.id = newId.toString();
+        newId++;
+    }
 
+    fs.writeFileSync("./db/db.json", JSON.stringify(deleteNote));
+    res.json(JSON.parse(deleteNote));
 });
