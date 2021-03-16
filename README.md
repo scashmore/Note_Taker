@@ -3,9 +3,9 @@
 ## About
 This application is desgined for users to keep track of all their important information. 
 Deployed: https://nameless-badlands-89235.herokuapp.com/
-Github:
+Github: https://github.com/scashmore/Note_Taker
 
-!Image[]
+![Image](screenshot.PNG)
 
 ## Install
 This applicaiton reqires express js
