@@ -35,14 +35,14 @@ app.get('/api/notes', (req, res) => {
 
 app.delete('/api/notes/:id', (req, res) => {
     const notes = fs.readFileSync("db/db.json", "utf8");
-    const noteId = JSON.parse(req.params.id)
+    const noteId = req.params.id;
     let newId = 0;
-    deleteNote = notes.filter(notes => {
-        return notes.id != noteId;
+    deleteNote = notes.filter(thisNote => {
+        return thisNote.id != noteId;
     })
     
-    for (selectedNote of deleteNote) {
-        selectedNote.id = newId.toString();
+    for (thisNote of deleteNote) {
+        thisNote.id = newId.toString();
         newId++;
     }
 
